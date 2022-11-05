@@ -30,7 +30,7 @@ class UserController extends Controller
                     'message' => 'Dados inválidos.',
                     'request' => $request->name,
                     'errors' => $validaUsuario->errors()
-                ], 401);
+                ], 400);
             }
 
             $user = User::create([
@@ -41,7 +41,8 @@ class UserController extends Controller
 
             return response()->json([
                 'message' => 'Usuário criado com sucesso!',
-                $this->sanitizeUserDataResponse($user),
+                'user' => $user,
+                'token' => $user->createToken('JWT')->plainTextToken
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
@@ -67,7 +68,7 @@ class UserController extends Controller
                 return response()->json([
                     'message' => 'Dados inválidos.',
                     'errors' => $validaUsuario->errors()
-                ], 401);
+                ], 400);
             }
 
             if (!Auth::attempt($request->only(['email', 'password']))) {
@@ -86,7 +87,7 @@ class UserController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage(),
-            ]);
+            ], 500);
         }
     }
 }
