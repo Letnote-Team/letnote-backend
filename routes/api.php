@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('auth')->group(function () {
+Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [UserController::class, 'register']);
     Route::post('login', [UserController::class, 'login']);
+});
+
+Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('/', [NoteController::class, 'index']);
 });
