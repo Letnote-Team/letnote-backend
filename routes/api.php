@@ -21,6 +21,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [UserController::class, 'login']);
 });
 
-Route::group(['prefix' => 'notes', 'middleware' => 'auth:sanctum'], function () {
-    Route::get('/', [NoteController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('notes/tree', [NoteController::class, 'showTree']);
+    Route::apiResource('notes', NoteController::class);
 });

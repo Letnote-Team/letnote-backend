@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\NoteRequest;
 use App\Http\Resources\NoteResource;
+use App\Http\Resources\TreeCollection;
+use App\Http\Resources\TreeResource;
+use App\Http\Resources\TreeResourceCollection;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,19 +19,11 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        return Note::where("user_id", Auth::id())->get();
-    }
+        $notes = Auth::user()->notes;
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return NoteResource::collection($notes);
     }
 
     /**
@@ -36,9 +32,15 @@ class NoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(NoteRequest $request)
     {
-        //
+        try {
+            $note = Auth::user()->notes()->create($request->validated());
+
+            return new NoteResource($note);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     /**
@@ -49,18 +51,14 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        //
+        return new NoteResource($note);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Note  $note
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Note $note)
+    public function showTree()
     {
-        //
+        $notes = Auth::user()->notes;
+
+        return new TreeResourceCollection($notes);
     }
 
     /**

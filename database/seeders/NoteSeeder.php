@@ -16,7 +16,7 @@ class NoteSeeder extends Seeder
     public function run()
     {
         Note::factory(4)->create([
-            "user_id" => 5,
+            "user_id" => 1,
         ]);
     }
 }
