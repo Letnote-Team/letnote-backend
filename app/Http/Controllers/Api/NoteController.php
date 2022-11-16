@@ -68,9 +68,16 @@ class NoteController extends Controller
      * @param  \App\Models\Note  $note
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Note $note)
+    public function update(NoteRequest $request, $id)
     {
-        //
+        try {
+            $note = Auth::user()->notes()->find($id)->first();
+            $note->update($request->validated());
+
+            return new NoteResource($note);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     /**
@@ -79,8 +86,11 @@ class NoteController extends Controller
      * @param  \App\Models\Note  $note
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Note $note)
+    public function destroy($id)
     {
-        //
+        $note = Auth::user()->notes()->find($id)->first();
+        $note->delete();
+
+        return response()->json(null, 204);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\API;
 
+use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class NoteRequest extends FormRequest
@@ -24,6 +25,7 @@ class NoteRequest extends FormRequest
     public function rules()
     {
         return [
+            'parent_id' => 'nullable|exists:notes,id',
             'title' => 'required',
             'body' => 'required',
         ];

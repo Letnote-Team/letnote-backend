@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\Feature\API\Notes;
-
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
 use App\Models\User;
@@ -9,42 +7,37 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
-class CreateNotesTest extends TestCase
+class UpdateNotesTest extends TestCase
 {
     use RefreshDatabase, DatabaseMigrations;
 
     /**
-     * Testa o endpoint para criação de anotações
+     * Testa o endpoint para atualizar uma anotação
      *
      * @return void
      */
-    public function test_create_notes()
+    public function test_update_note()
     {
-        $request = Request::create('/api/notes', 'POST');
-
         Sanctum::actingAs(
             User::factory()->create()
         );
 
-        Note::factory(4)->create([
-            "user_id" => Auth::id(),
-        ]);
-
         $this->assertAuthenticated();
 
-        $note = Note::factory()->makeOne([
+        $note = Note::factory()->createOne([
             "user_id" => Auth::id(),
-            "parentId" => Note::find(1)->id,
         ]);
 
-        $response = $this->postJson(
-            '/api/notes',
-            $note->only(['title', 'body', 'parentId'])
-        );
+        $updateNote = Note::factory()->makeOne();
 
-        $response->assertCreated();
+        $response = $this->putJson('/api/notes/' . strval($note->id), $updateNote->only(['title', 'body']))
+            ->assertSuccessful()
+            ->assertJson(function (AssertableJson $json) use ($updateNote) {
+                $json->where('data.body', $updateNote->body);
+            });
     }
 }

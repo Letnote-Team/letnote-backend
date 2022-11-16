@@ -43,7 +43,7 @@ class UserController extends Controller
                 'message' => 'Usuário criado com sucesso!',
                 'user' => $user,
                 'token' => $user->createToken('JWT')->plainTextToken
-            ], 200);
+            ], 201);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage(),
