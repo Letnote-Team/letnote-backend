@@ -28,9 +28,11 @@ class UpdateNotesTest extends TestCase
 
         $this->assertAuthenticated();
 
-        $note = Note::factory()->createOne([
+        $notes = Note::factory(4)->createOne([
             "user_id" => Auth::id(),
         ]);
+
+        $note = Note::inRandomOrder()->first();
 
         $updateNote = Note::factory()->makeOne();
 

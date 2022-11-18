@@ -71,7 +71,7 @@ class NoteController extends Controller
     public function update(NoteRequest $request, $id)
     {
         try {
-            $note = Auth::user()->notes()->find($id)->first();
+            $note = Auth::user()->notes()->find($id);
             $note->update($request->validated());
 
             return new NoteResource($note);
@@ -88,7 +88,7 @@ class NoteController extends Controller
      */
     public function destroy($id)
     {
-        $note = Auth::user()->notes()->find($id)->first();
+        $note = Auth::user()->notes()->find($id);
         $note->delete();
 
         return response()->json(null, 204);

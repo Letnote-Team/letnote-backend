@@ -28,9 +28,11 @@ class DeleteNoteTest extends TestCase
 
         $this->assertAuthenticated();
 
-        $note = Note::factory()->createOne([
+        $notes = Note::factory(4)->createOne([
             "user_id" => Auth::id(),
         ]);
+
+        $note = Note::inRandomOrder()->first();
 
         $response = $this->delete('/api/notes/' . strval($note->id))
             ->assertSuccessful();

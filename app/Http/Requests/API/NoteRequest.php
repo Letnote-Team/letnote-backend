@@ -26,8 +26,8 @@ class NoteRequest extends FormRequest
     {
         return [
             'parent_id' => 'nullable|exists:notes,id',
-            'title' => 'required',
-            'body' => 'required',
+            'title' => 'nullable',
+            'body' => 'nullable',
         ];
     }
 }
