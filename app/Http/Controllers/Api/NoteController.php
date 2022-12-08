@@ -72,6 +72,15 @@ class NoteController extends Controller
     {
         try {
             $note = Auth::user()->notes()->find($id);
+
+            $request->merge(array_filter($request->validated()));
+
+            if (isset($request->parent_id) && $request->parent_id === 0) {
+                $request->merge([
+                    "parent_id" => null
+                ]);
+            }
+
             $note->update($request->validated());
 
             return new NoteResource($note);
